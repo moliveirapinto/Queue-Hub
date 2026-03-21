@@ -7,6 +7,9 @@
 .queue-hub .qh-search:focus{border-color:#0078d4;box-shadow:0 0 0 2px rgba(0,120,212,.15)}
 .queue-hub .qh-search::placeholder{color:#999}
 
+/* Subtitle */
+.queue-hub .qh-subtitle{padding:2px 16px 8px;font-size:11.5px;color:#888;line-height:1.4}
+
 /* Back button */
 .queue-hub .qh-back{display:flex;align-items:center;gap:6px;padding:8px 12px;border:none;background:none;color:#0078d4;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:color .15s}
 .queue-hub .qh-back:hover{color:#005a9e}

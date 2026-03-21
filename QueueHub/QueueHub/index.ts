@@ -82,6 +82,7 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
 
   // DOM refs
   private _elSearch!: HTMLInputElement;
+  private _elSubtitle!: HTMLDivElement;
   private _elList!: HTMLDivElement;
   private _elBack!: HTMLButtonElement;
   private _elHeader!: HTMLDivElement;
@@ -129,6 +130,7 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
       <div class="qh-search-wrap">
         <input class="qh-search" data-ref="search" placeholder="Search queues\u2026" autocomplete="off" />
       </div>
+      <div class="qh-subtitle" data-ref="subtitle">Monitor your team\u2019s availability across every queue you belong to \u2014 in real time.</div>
       <button class="qh-back" data-ref="back" style="display:none">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M12.35 3.15a.5.5 0 0 1 0 .7L6.21 10l6.14 6.15a.5.5 0 0 1-.7.7l-6.5-6.5a.5.5 0 0 1 0-.7l6.5-6.5a.5.5 0 0 1 .7 0Z"/></svg>
         <span>All Queues</span>
@@ -140,6 +142,7 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
       </div>`;
 
     this._elSearch = this._ref("search") as HTMLInputElement;
+    this._elSubtitle = this._ref("subtitle") as HTMLDivElement;
     this._elList = this._ref("list") as HTMLDivElement;
     this._elBack = this._ref("back") as HTMLButtonElement;
     this._elHeader = this._ref("header") as HTMLDivElement;
@@ -304,6 +307,7 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
     this._elBack.style.display = "none";
     this._elHeader.style.display = "none";
     this._elSummary.style.display = "none";
+    this._elSubtitle.style.display = "";
     this._elSearch.placeholder = "Search queues\u2026";
 
     let queues = this._queues;
@@ -346,6 +350,7 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
     this._elSearch.value = "";
     this._elSearch.placeholder = "Search agents\u2026";
     this._elBack.style.display = "";
+    this._elSubtitle.style.display = "none";
 
     this._elHeader.style.display = "";
     this._elHeader.innerHTML = `
