@@ -179,6 +179,14 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
     throw new Error("WebAPI not available");
   }
 
+  private _getOrgUrl(): string {
+    const xrm = (window as unknown as Record<string, unknown>)["Xrm"] as
+      { Utility?: { getGlobalContext?: () => { getClientUrl?: () => string } } } | undefined;
+    const url = xrm?.Utility?.getGlobalContext?.()?.getClientUrl?.();
+    if (url) return url.replace(/\/+$/, "");
+    return "";
+  }
+
   private _getUserId(): string {
     const ctx = this._context as ComponentFramework.Context<IInputs> & { userSettings?: { userId?: string } };
     const uid = ctx.userSettings?.userId;
@@ -419,9 +427,12 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
       const col = statusColor(a.presenceName);
       const sinceStr = a.since ? fmtDuration(Date.now() - new Date(a.since).getTime()) : "";
       const isMe = a.id === this._userId;
+      const initials = esc(getInitials(a.name));
+      const imgUrl = `${this._getOrgUrl()}/api/data/v9.2/systemusers(${a.id})/entityimage/$value`;
       html += `<div class="qh-agent">
         <div class="qh-agent-avatar" style="background:${isMe ? "#e0ecff" : "#f0f0f0"};color:${isMe ? "#0078d4" : "#666"}">
-          ${esc(getInitials(a.name))}
+          <img class="qh-agent-photo" src="${imgUrl}" alt="" onload="this.parentElement.style.background='transparent'" onerror="this.style.display='none';this.nextElementSibling.style.display=''" />
+          <span class="qh-agent-initials" style="display:none">${initials}</span>
           <div class="qh-agent-dot" style="background:${col}"></div>
         </div>
         <div class="qh-agent-body">
