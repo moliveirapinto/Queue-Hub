@@ -17,9 +17,8 @@
 
 /* Header */
 .queue-hub .qh-header{padding:4px 12px 8px;display:flex;align-items:center;gap:8px}
-.queue-hub .qh-header-icon{width:28px;height:28px;border-radius:8px;background:#0078d4;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.queue-hub .qh-header-text{font-size:14px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.queue-hub .qh-header-count{font-size:11px;color:#888;font-weight:400}
+.queue-hub .qh-header-text{display:inline-block;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,#0078d4,#005a9e);padding:4px 14px;border-radius:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;box-shadow:0 1px 4px rgba(0,120,212,.25)}
+.queue-hub .qh-header-count{font-size:11px;color:#888;font-weight:400;margin-top:2px}
 
 /* Queue list */
 .queue-hub .qh-list{flex:1;overflow-y:auto;padding:0 8px 12px}

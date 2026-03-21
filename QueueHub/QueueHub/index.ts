@@ -354,9 +354,6 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
 
     this._elHeader.style.display = "";
     this._elHeader.innerHTML = `
-      <div class="qh-header-icon">
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M14.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm-1.5 0a3 3 0 1 0-6 0 3 3 0 0 0 6 0Zm-9 10.5c0-2.5 2-4.5 4.5-4.5h3c2.5 0 4.5 2 4.5 4.5a.5.5 0 0 1-1 0c0-1.93-1.57-3.5-3.5-3.5h-3C6.57 14 5 15.57 5 17.5a.5.5 0 0 1-1 0Z"/></svg>
-      </div>
       <div>
         <div class="qh-header-text">${esc(queue.name)}</div>
         <div class="qh-header-count">Loading agents\u2026</div>
