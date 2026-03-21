@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="MauLabs" constructor="QueueHub" version="1.0.0" display-name-key="Queue Hub" description-key="Shows agent queues and real-time member presence statuses" control-type="standard" >
+  <control namespace="MauLabs" constructor="QueueHub" version="1.1.0" display-name-key="Queue Hub" description-key="Shows agent queues and real-time member presence statuses" control-type="standard" >
     <external-service-usage enabled="false">
     </external-service-usage>
     <property name="dummyProp" display-name-key="Dummy" description-key="Unused property required by PCF" of-type="SingleLine.Text" usage="input" required="false" />
