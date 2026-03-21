@@ -180,6 +180,14 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
     throw new Error("WebAPI not available");
   }
 
+  private _getClientUrl(): string {
+    const xrm = (window as unknown as Record<string, unknown>)["Xrm"] as
+      { Utility?: { getGlobalContext?: () => { getClientUrl?: () => string } } } | undefined;
+    const url = xrm?.Utility?.getGlobalContext?.()?.getClientUrl?.();
+    if (url) return url;
+    return window.location.origin;
+  }
+
   private _getUserId(): string {
     const ctx = this._context as ComponentFramework.Context<IInputs> & { userSettings?: { userId?: string } };
     const uid = ctx.userSettings?.userId;
@@ -241,7 +249,6 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
       <entity name="systemuser">
         <attribute name="systemuserid"/>
         <attribute name="fullname"/>
-        <attribute name="entityimage"/>
         <order attribute="fullname"/>
         <link-entity name="queuemembership" from="systemuserid" to="systemuserid" intersect="true">
           <link-entity name="queue" from="queueid" to="queueid">
@@ -264,7 +271,7 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
         presenceId: null,
         presenceName: "Unknown",
         since: null,
-        photo: (e["entityimage"] as string) || null,
+        photo: null,
       });
     }
 
@@ -423,9 +430,8 @@ export class QueueHub implements ComponentFramework.StandardControl<IInputs, IOu
       const sinceStr = a.since ? fmtDuration(Date.now() - new Date(a.since).getTime()) : "";
       const isMe = a.id === this._userId;
       const initials = esc(getInitials(a.name));
-      const photoHtml = a.photo
-        ? `<img class="qh-agent-photo" src="data:image/jpeg;base64,${a.photo}" alt="" onload="this.parentElement.style.background='transparent'" />`
-        : `<span class="qh-agent-initials">${initials}</span>`;
+      const imgUrl = `${this._getClientUrl()}/api/data/v9.2/systemusers(${a.id})/entityimage/$value`;
+      const photoHtml = `<img class="qh-agent-photo" src="${esc(imgUrl)}" alt="" onload="this.parentElement.style.background='transparent'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><span class="qh-agent-initials" style="display:none">${initials}</span>`;
       html += `<div class="qh-agent">
         <div class="qh-agent-avatar" style="background:${isMe ? "#e0ecff" : "#f0f0f0"};color:${isMe ? "#0078d4" : "#666"}">
           ${photoHtml}

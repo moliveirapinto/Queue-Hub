@@ -139,6 +139,35 @@ Queue-Hub/
             └── QueueHub.css           # Control styles
 ```
 
+## Profile Photo Sync
+
+The Queue Hub displays agent profile photos from the Dataverse `entityimage` field. Since Dataverse doesn't automatically sync photos from Azure AD / Entra ID, you need to sync them periodically.
+
+### Option 1: Power Automate Flow (Automated)
+
+A cloud flow named **"Queue Hub - Sync Profile Photos"** is included in the QueueHub solution. It runs daily at 2 AM EST and syncs photos from Microsoft Graph to Dataverse for all active users.
+
+**To activate it:**
+1. Go to [make.powerapps.com](https://make.powerapps.com) → **Solutions** → **QueueHub**
+2. Open the flow **"Queue Hub - Sync Profile Photos"**
+3. Set up the required connections:
+   - **Dataverse** — select your environment connection
+   - **Office 365 Users** — sign in with an account that can read user photos
+4. **Turn on** the flow
+5. Optionally click **Run** to trigger an immediate sync
+
+### Option 2: PowerShell Script (Manual / Scheduled)
+
+Run `SyncPhotos.ps1` from a PowerShell terminal for on-demand photo sync:
+
+```powershell
+.\SyncPhotos.ps1
+```
+
+The script uses device code flow for authentication (no app registration required) and syncs photos from Microsoft Graph to Dataverse `entityimage` for all active users with Azure AD Object IDs.
+
+You can schedule it via **Windows Task Scheduler** or **Azure Automation** for periodic runs.
+
 ## Data Model
 
 The control queries three main entities via FetchXML:
