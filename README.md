@@ -4,6 +4,19 @@ A **Power Apps Component Framework (PCF)** control designed for the **Dynamics 3
 
 ![Queue Hub](img/queue-hub.png)
 
+## Table of Contents
+
+- [What It Does](#what-it-does)
+- [Presence Status Colors](#presence-status-colors)
+- [Control Properties](#control-properties)
+- [Prerequisites](#prerequisites)
+- [How to Deploy to Your Dynamics 365 Environment](#how-to-deploy-to-your-dynamics-365-environment)
+- [Configure as a Productivity Pane Tool](#configure-as-a-productivity-pane-tool)
+- [Project Structure](#project-structure)
+- [Profile Photo Sync](#profile-photo-sync)
+- [Data Model](#data-model)
+- [License](#license)
+
 ## What It Does
 
 This control provides a two-view navigation experience inside the productivity pane:
@@ -52,6 +65,9 @@ The control uses the **WebAPI** and **Utility** PCF features to query Dataverse 
 - Agent presence requires **Omnichannel presence** to be active
 
 ## How to Deploy to Your Dynamics 365 Environment
+
+> [!IMPORTANT]
+> After importing the solution, you **must** configure the control as a productivity pane tool — see [Configure as a Productivity Pane Tool](#configure-as-a-productivity-pane-tool) below. The control will not appear in the workspace until this step is completed.
 
 ### Option 1: Import the Solution (Recommended)
 
