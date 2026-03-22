@@ -2,7 +2,7 @@
 
 A **Power Apps Component Framework (PCF)** control designed for the **Dynamics 365 Customer Service workspace productivity pane**. It shows all queues the logged-in agent is assigned to and lets them drill into any queue to see members with their **real-time presence statuses**.
 
-![Queue Hub](img/queue-hub.png)
+![Queue Hub](img/qhub.png)
 
 ## Table of Contents
 
@@ -134,8 +134,6 @@ After importing the solution, you need to configure Queue Hub as a **pane tool**
 8. **Publish** all customizations
 
 The control will appear as a new icon in the productivity pane sidebar of the Customer Service workspace.
-
-![Pane Tool Configuration](img/pane-tool.png)
 
 ## Project Structure
 
