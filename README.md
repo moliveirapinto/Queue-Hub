@@ -126,35 +126,77 @@ The control will appear as a new icon in the productivity pane sidebar of the Cu
 ```
 Queue-Hub/
 ├── README.md
-├── img/                              # Screenshots for documentation
+├── SyncPhotos.ps1                             # PowerShell script for manual photo sync
+├── SyncUserPhotos-flow-definition.json        # Power Automate flow definition (reference)
+├── img/                                       # Screenshots for documentation
 └── QueueHub/
     ├── package.json
     ├── tsconfig.json
     ├── pcfconfig.json
     ├── QueueHub.pcfproj
     └── QueueHub/
-        ├── ControlManifest.Input.xml  # PCF control manifest
-        ├── index.ts                   # Main control logic (~470 lines)
+        ├── ControlManifest.Input.xml          # PCF control manifest
+        ├── index.ts                           # Main control logic (~470 lines)
         └── css/
-            └── QueueHub.css           # Control styles
+            └── QueueHub.css                   # Control styles
 ```
 
 ## Profile Photo Sync
 
-The Queue Hub displays agent profile photos from the Dataverse `entityimage` field. Since Dataverse doesn't automatically sync photos from Azure AD / Entra ID, you need to sync them periodically.
+The Queue Hub displays agent profile photos from the Dataverse `entityimage` field. Since Dataverse doesn't automatically sync photos from Azure AD / Microsoft Entra ID, you need to sync them periodically.
 
-### Option 1: Power Automate Flow (Automated)
+### Option 1: Power Automate Cloud Flow (Automated — Recommended)
 
-A cloud flow named **"Queue Hub - Sync Profile Photos"** is included in the QueueHub solution. It runs daily at 2 AM EST and syncs photos from Microsoft Graph to Dataverse for all active users.
+A cloud flow named **"Sync User Photos"** is included in the QueueHub solution. It automatically syncs profile photos from Microsoft 365 (Office 365 Users connector) to the Dataverse `systemuser.entityimage` field.
 
-**To activate it:**
+#### How It Works
+
+```
+Recurrence (Daily 06:00 UTC)
+  └─ List Active Users (Dataverse)
+       Filter: enabled, has AAD Object ID, excludes application/non-interactive users
+       └─ For Each User (sequential, concurrency=1)
+            └─ Scope: Sync Photo
+                 ├─ Get User Photo (Office 365 Users connector)
+                 └─ Update User Record — sets entityimage (Dataverse)
+```
+
+**Flow actions in detail:**
+
+| Step | Action | Connector | Description |
+|------|--------|-----------|-------------|
+| 1 | **Recurrence** | Built-in | Triggers daily at 06:00 UTC |
+| 2 | **List_Active_Users** | Dataverse | Queries `systemusers` with filter: `isdisabled eq false and azureactivedirectoryobjectid ne null and accessmode ne 4 and accessmode ne 6` — this returns only real human agents, excluding disabled users, bot accounts, and Copilot/application service principals |
+| 3 | **Apply_to_each_user** | Control | Iterates through each user sequentially (concurrency=1 to avoid throttling) |
+| 4 | **Scope_Sync_Photo** | Control | Wraps the photo sync steps so that a failure for one user (e.g. no photo in M365) doesn't stop processing of other users |
+| 5 | **Get_User_Photo** | Office 365 Users | Calls `UserPhoto` operation with the user's `azureactivedirectoryobjectid` to fetch the profile photo from Microsoft 365 |
+| 6 | **Update_User_Photo** | Dataverse | Updates the `systemuser` record's `entityimage` field with the photo content from step 5 |
+
+#### Connection References
+
+The flow uses two connection references that must be configured in your environment:
+
+| Connection Reference | Connector | Purpose |
+|---|---|---|
+| `msdyn_sharedcommondataserviceforapps_*` | Microsoft Dataverse | Read/write systemuser records |
+| `maulabs_sharedoffice365users_*` | Office 365 Users | Read user profile photos from Microsoft 365 |
+
+#### Setup Instructions
+
 1. Go to [make.powerapps.com](https://make.powerapps.com) → **Solutions** → **QueueHub**
-2. Open the flow **"Queue Hub - Sync Profile Photos"**
+2. Open the flow **"Sync User Photos"**
 3. Set up the required connections:
    - **Dataverse** — select your environment connection
-   - **Office 365 Users** — sign in with an account that can read user photos
+   - **Office 365 Users** — sign in with an account that has permissions to read user photos
 4. **Turn on** the flow
 5. Optionally click **Run** to trigger an immediate sync
+
+#### Important Notes
+
+- The filter `accessmode ne 4 and accessmode ne 6` excludes **Non-Interactive** (4) and **Application** (6) system users — these are Copilot agents, bots, and service principals that don't have real profile photos and would cause `BadRequest` errors when attempting to update their records.
+- The **Scope** pattern ensures that if fetching a photo fails for one user (e.g. user has no photo in Microsoft 365), the flow continues processing the remaining users.
+- Concurrency is set to **1** (sequential processing) to avoid API throttling.
+- The flow definition JSON is available in [`SyncUserPhotos-flow-definition.json`](SyncUserPhotos-flow-definition.json) for reference. You can use this as a template to recreate the flow in another environment.
 
 ### Option 2: PowerShell Script (Manual / Scheduled)
 

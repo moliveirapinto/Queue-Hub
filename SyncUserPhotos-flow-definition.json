@@ -1,0 +1,137 @@
+﻿{
+    "properties":  {
+                       "connectionReferences":  {
+                                                    "shared_commondataserviceforapps_1":  {
+                                                                                              "runtimeSource":  "embedded",
+                                                                                              "connection":  {
+                                                                                                                 "connectionReferenceLogicalName":  "msdyn_sharedcommondataserviceforapps_21766"
+                                                                                                             },
+                                                                                              "api":  {
+                                                                                                          "name":  "shared_commondataserviceforapps"
+                                                                                                      }
+                                                                                          },
+                                                    "shared_office365users_1":  {
+                                                                                    "runtimeSource":  "embedded",
+                                                                                    "connection":  {
+                                                                                                       "connectionReferenceLogicalName":  "maulabs_sharedoffice365users_54c90"
+                                                                                                   },
+                                                                                    "api":  {
+                                                                                                "name":  "shared_office365users"
+                                                                                            }
+                                                                                }
+                                                },
+                       "definition":  {
+                                          "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                                          "contentVersion":  "1.0.0.0",
+                                          "parameters":  {
+                                                             "$connections":  {
+                                                                                  "defaultValue":  {
+
+                                                                                                   },
+                                                                                  "type":  "Object"
+                                                                              },
+                                                             "$authentication":  {
+                                                                                     "defaultValue":  {
+
+                                                                                                      },
+                                                                                     "type":  "SecureObject"
+                                                                                 }
+                                                         },
+                                          "triggers":  {
+                                                           "Recurrence":  {
+                                                                              "type":  "Recurrence",
+                                                                              "recurrence":  {
+                                                                                                 "frequency":  "Day",
+                                                                                                 "interval":  1,
+                                                                                                 "startTime":  "2025-01-01T06:00:00Z",
+                                                                                                 "timeZone":  "UTC"
+                                                                                             }
+                                                                          }
+                                                       },
+                                          "actions":  {
+                                                          "List_Active_Users":  {
+                                                                                    "runAfter":  {
+
+                                                                                                 },
+                                                                                    "type":  "OpenApiConnection",
+                                                                                    "inputs":  {
+                                                                                                   "host":  {
+                                                                                                                "connectionName":  "shared_commondataserviceforapps_1",
+                                                                                                                "operationId":  "ListRecordsWithOrganization",
+                                                                                                                "apiId":  "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                                                                                                            },
+                                                                                                   "parameters":  {
+                                                                                                                      "organization":  "https://mauriciomaster.crm.dynamics.com",
+                                                                                                                      "entityName":  "systemusers",
+                                                                                                                      "$filter":  "isdisabled eq false and azureactivedirectoryobjectid ne null and accessmode ne 4 and accessmode ne 6",
+                                                                                                                      "$select":  "systemuserid,azureactivedirectoryobjectid,fullname"
+                                                                                                                  },
+                                                                                                   "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                               }
+                                                                                },
+                                                          "Apply_to_each_user":  {
+                                                                                     "runAfter":  {
+                                                                                                      "List_Active_Users":  [
+                                                                                                                                "Succeeded"
+                                                                                                                            ]
+                                                                                                  },
+                                                                                     "type":  "Foreach",
+                                                                                     "foreach":  "@outputs(\u0027List_Active_Users\u0027)?[\u0027body/value\u0027]",
+                                                                                     "actions":  {
+                                                                                                     "Scope_Sync_Photo":  {
+                                                                                                                              "type":  "Scope",
+                                                                                                                              "actions":  {
+                                                                                                                                              "Get_User_Photo":  {
+                                                                                                                                                                     "runAfter":  {
+
+                                                                                                                                                                                  },
+                                                                                                                                                                     "type":  "OpenApiConnection",
+                                                                                                                                                                     "inputs":  {
+                                                                                                                                                                                    "host":  {
+                                                                                                                                                                                                 "connectionName":  "shared_office365users_1",
+                                                                                                                                                                                                 "operationId":  "UserPhoto",
+                                                                                                                                                                                                 "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365users"
+                                                                                                                                                                                             },
+                                                                                                                                                                                    "parameters":  {
+                                                                                                                                                                                                       "userId":  "@items(\u0027Apply_to_each_user\u0027)?[\u0027azureactivedirectoryobjectid\u0027]"
+                                                                                                                                                                                                   },
+                                                                                                                                                                                    "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                                                                                }
+                                                                                                                                                                 },
+                                                                                                                                              "Update_User_Photo":  {
+                                                                                                                                                                        "runAfter":  {
+                                                                                                                                                                                         "Get_User_Photo":  [
+                                                                                                                                                                                                                "Succeeded"
+                                                                                                                                                                                                            ]
+                                                                                                                                                                                     },
+                                                                                                                                                                        "type":  "OpenApiConnection",
+                                                                                                                                                                        "inputs":  {
+                                                                                                                                                                                       "host":  {
+                                                                                                                                                                                                    "connectionName":  "shared_commondataserviceforapps_1",
+                                                                                                                                                                                                    "operationId":  "UpdateRecordWithOrganization",
+                                                                                                                                                                                                    "apiId":  "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                                                                                                                                                                                                },
+                                                                                                                                                                                       "parameters":  {
+                                                                                                                                                                                                          "organization":  "https://mauriciomaster.crm.dynamics.com",
+                                                                                                                                                                                                          "entityName":  "systemusers",
+                                                                                                                                                                                                          "recordId":  "@items(\u0027Apply_to_each_user\u0027)?[\u0027systemuserid\u0027]",
+                                                                                                                                                                                                          "item/entityimage":  "@body(\u0027Get_User_Photo\u0027)?[\u0027$content\u0027]"
+                                                                                                                                                                                                      },
+                                                                                                                                                                                       "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                                                                                   }
+                                                                                                                                                                    }
+                                                                                                                                          }
+                                                                                                                          }
+                                                                                                 },
+                                                                                     "runtimeConfiguration":  {
+                                                                                                                  "concurrency":  {
+                                                                                                                                      "repetitions":  1
+                                                                                                                                  }
+                                                                                                              }
+                                                                                 }
+                                                      }
+                                      },
+                       "templateName":  ""
+                   },
+    "schemaVersion":  "1.0.0.0"
+}
