@@ -2,7 +2,7 @@
 .queue-hub *,.queue-hub *::before,.queue-hub *::after{box-sizing:border-box}
 
 /* Search bar */
-.queue-hub .qh-search-wrap{padding:12px 12px 8px;position:sticky;top:0;background:#fafafa;z-index:10}
+.queue-hub .qh-search-wrap{padding:12px 12px 8px;position:sticky;top:0;background:transparent;z-index:10}
 .queue-hub .qh-search{width:100%;padding:8px 12px 8px 32px;border:1px solid #e0e0e0;border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='%23999'%3E%3Cpath d='M8.5 3a5.5 5.5 0 0 1 4.23 9.02l4.12 4.13a.75.75 0 0 1-1.06 1.06l-4.13-4.12A5.5 5.5 0 1 1 8.5 3Zm0 1.5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z'/%3E%3C/svg%3E") 10px center no-repeat}
 .queue-hub .qh-search:focus{border-color:#0078d4;box-shadow:0 0 0 2px rgba(0,120,212,.15)}
 .queue-hub .qh-search::placeholder{color:#999}
@@ -10,15 +10,11 @@
 /* Subtitle */
 .queue-hub .qh-subtitle{padding:2px 16px 8px;font-size:11.5px;color:#888;line-height:1.4;text-align:center}
 
-/* Back button */
-.queue-hub .qh-back{display:flex;align-items:center;gap:6px;padding:8px 12px;border:none;background:none;color:#0078d4;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:color .15s}
-.queue-hub .qh-back:hover{color:#005a9e}
-.queue-hub .qh-back svg{flex-shrink:0}
-
-/* Header */
-.queue-hub .qh-header{padding:4px 12px 8px;display:flex;align-items:center;gap:8px}
-.queue-hub .qh-header-text{display:inline-block;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,#0078d4,#005a9e);padding:4px 14px;border-radius:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;box-shadow:0 1px 4px rgba(0,120,212,.25)}
-.queue-hub .qh-header-count{font-size:11px;color:#888;font-weight:400;margin-top:2px}
+/* Tabs */
+.queue-hub .qh-tabs{display:flex;gap:0;padding:0 12px 8px;border-bottom:1px solid #e8e8e8;margin:0 8px}
+.queue-hub .qh-tab{border:none;background:none;padding:8px 16px;font-size:13px;font-weight:600;color:#666;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;margin-bottom:-1px}
+.queue-hub .qh-tab:hover{color:#333}
+.queue-hub .qh-tab--active{color:#0078d4;border-bottom-color:#0078d4}
 
 /* Queue list */
 .queue-hub .qh-list{flex:1;overflow-y:auto;padding:0 8px 12px}
@@ -27,16 +23,36 @@
 /* Queue item */
 .queue-hub .qh-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .12s;margin-bottom:2px}
 .queue-hub .qh-item:hover{background:#f0f4ff}
+.queue-hub .qh-item--selectable{cursor:pointer}
+.queue-hub .qh-item--selected{background:#e8f0fe}
+.queue-hub .qh-item--selected:hover{background:#dce8fc}
 .queue-hub .qh-item-icon{width:32px;height:32px;border-radius:8px;background:#f0f0f0;color:#555;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;transition:background .15s,color .15s}
+.queue-hub .qh-item-icon--sm{width:24px;height:24px;border-radius:6px;font-size:11px}
 .queue-hub .qh-item:hover .qh-item-icon{background:#e0ecff;color:#0078d4}
+.queue-hub .qh-item--selected .qh-item-icon{background:#0078d4;color:#fff}
 .queue-hub .qh-item-body{flex:1;min-width:0}
 .queue-hub .qh-item-name{font-size:13px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .queue-hub .qh-item-meta{font-size:10px;color:#999;margin-top:1px}
 .queue-hub .qh-item-arrow{color:#ccc;flex-shrink:0;transition:color .15s}
 .queue-hub .qh-item:hover .qh-item-arrow{color:#0078d4}
 
-/* Agent item in queue detail */
+/* Checkbox */
+.queue-hub .qh-checkbox-wrap{display:flex;align-items:center;flex-shrink:0;cursor:pointer;position:relative}
+.queue-hub .qh-checkbox{position:absolute;opacity:0;width:0;height:0}
+.queue-hub .qh-checkbox-custom{width:18px;height:18px;border:2px solid #c0c0c0;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff}
+.queue-hub .qh-checkbox:checked+.qh-checkbox-custom{background:#0078d4;border-color:#0078d4}
+.queue-hub .qh-checkbox:checked+.qh-checkbox-custom::after{content:'';display:block;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-1px}
+
+/* Results divider */
+.queue-hub .qh-results-divider{display:flex;align-items:center;padding:12px 12px 8px;gap:8px}
+.queue-hub .qh-results-divider::before,.queue-hub .qh-results-divider::after{content:'';flex:1;height:1px;background:#e0e0e0}
+.queue-hub .qh-results-divider span{font-size:11px;font-weight:600;color:#888;white-space:nowrap}
+.queue-hub .qh-results-count{font-size:11px;color:#888;padding:2px 12px 6px}
+
+/* Agent item */
 .queue-hub .qh-agent{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;margin-bottom:2px}
+.queue-hub .qh-agent--clickable{cursor:pointer;transition:background .12s}
+.queue-hub .qh-agent--clickable:hover{background:#f5f5f5}
 .queue-hub .qh-agent-avatar{width:32px;height:32px;border-radius:50%;background:#e8e8e8;color:#666;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;position:relative}
 .queue-hub .qh-agent-photo{width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;top:0;left:0}
 .queue-hub .qh-agent-initials{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
@@ -46,8 +62,18 @@
 .queue-hub .qh-agent-status{font-size:10px;color:#888;margin-top:1px;display:flex;align-items:center;gap:4px}
 .queue-hub .qh-agent-since{font-size:10px;color:#aaa;font-variant-numeric:tabular-nums;flex-shrink:0;white-space:nowrap}
 .queue-hub .qh-agent-you{font-size:9px;color:#0078d4;font-weight:600;background:#e0ecff;padding:1px 6px;border-radius:4px;flex-shrink:0}
+.queue-hub .qh-agent-queue-count{font-size:10px;color:#888;flex-shrink:0;white-space:nowrap}
 
-/* Summary chips at top of agent list */
+/* Expandable agent (Agents tab) */
+.queue-hub .qh-agent-expandable{border-radius:10px;margin-bottom:2px;overflow:hidden}
+.queue-hub .qh-agent-expandable--open{background:#fafafa}
+.queue-hub .qh-expand-arrow{color:#aaa;flex-shrink:0;transition:transform .2s;margin-left:4px}
+.queue-hub .qh-expand-arrow--open{transform:rotate(180deg)}
+.queue-hub .qh-agent-queues{padding:0 12px 8px 54px}
+.queue-hub .qh-agent-queue-item{display:flex;align-items:center;gap:8px;padding:4px 8px;font-size:12px;color:#555;border-radius:6px}
+.queue-hub .qh-agent-queue-item:hover{background:#eee}
+
+/* Summary chips */
 .queue-hub .qh-summary{display:flex;flex-wrap:wrap;gap:6px;padding:4px 12px 8px}
 .queue-hub .qh-chip{display:flex;align-items:center;gap:4px;font-size:10px;color:#555;background:#f5f5f5;padding:3px 8px;border-radius:12px}
 .queue-hub .qh-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
